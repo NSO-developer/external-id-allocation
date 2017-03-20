@@ -6,18 +6,18 @@ It consists of three actions and two kickers. Should be three but today kickers 
 The three actions are
 
  * allocate
-    does the actual allocation and creates an entry in the response list
+    * does the actual allocation and creates an entry in the response list
  * release
-    releases the allocation from the external system and also deletes the response entry for the service in question
+    * releases the allocation from the external system and also deletes the response entry for the service in question
  * re-deploy-service
-    re-deploys the service that requested the allocation
+    * re-deploys the service that requested the allocation
 
 The two kickers are
 
  * external-id-allocator
-    executes the allocate action when a request is created
-* external-id-redeploy
-    exectues the re-deploy-service action when a response entry is created
+    * executes the allocate action when a request is created
+ * external-id-redeploy
+    * exectues the re-deploy-service action when a response entry is created
 
 To use it manually (just to show the steps), you need to have a service instance created already.
 
