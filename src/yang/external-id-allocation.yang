@@ -26,8 +26,11 @@ module external-id-allocation {
     description "This is an RFS skeleton service";
     presence true;
 
-    uses ncs:service-data;
-    ncs:servicepoint external-id-allocation-servicepoint;
+    container create-kickers {
+        presence true;
+        uses ncs:service-data;
+        ncs:servicepoint external-id-allocation-servicepoint;
+    }
 
     list request {
       key name;
