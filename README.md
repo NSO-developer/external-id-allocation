@@ -144,6 +144,25 @@ volvo  /vlan[name='volvo']  -      242
 [ok][2017-03-20 18:15:10]
 
 [edit]
+admin@ncs% show devices device c0 config ios:interface FastEthernet | display service-meta-data
+/* Refcount: 2 */
+/* Backpointer: [ /vlan:vlan[vlan:name='volvo'] ] */
+FastEthernet 1/0 {
+    switchport {
+        mode {
+            /* Refcount: 1 */
+            /* Backpointer: [ /vlan:vlan[vlan:name='volvo'] ] */
+            trunk;
+        }
+        trunk {
+            allowed {
+                vlan {
+                    vlans [ 156 ];
+                }
+            }
+        }
+    }
+}
 admin@ncs% delete vlan volvo
 [ok][2017-03-20 18:15:14]
 
