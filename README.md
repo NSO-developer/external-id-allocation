@@ -64,3 +64,41 @@ when the allocation is done the service should be re-deployed
 request external-id-allocation response volvo re-deploy-service
 ```
 
+And then putting the whole thing together with a service you let the service create the allocation request and then the kickers (and the subscriber) autmatically handles the rest.
+
+Here is an example that populates the request, it will then create the switchport if the response has been created and also set allocated VLAN-id in trunk allowed vlans
+
+```XML
+<config-template xmlns="http://tail-f.com/ns/config/1.0" servicepoint="vlan">
+  <external-id-allocation xmlns="http://example.com/external-id-allocation">
+    <request>
+      <name>{/name}</name>
+      <allocating-service xmlns:vlan="http://com/example/vlan">/vlan:vlan[vlan:name='{/name}']</allocating-service>
+    </request>
+  </external-id-allocation>
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{/device}</name>
+      <config>
+      <interface xmlns="urn:ios">
+        <FastEthernet>
+          <name>1/0</name>
+          <switchport when="{../ext-id:external-id-allocation/ext-id:response[ext-id:name=/name]/ext-id:id}">
+            <mode>
+              <trunk/>
+            </mode>
+            <trunk>
+              <allowed>
+                <vlan>
+                  <vlans>{../ext-id:external-id-allocation/ext-id:response[ext-id:name=/name]/ext-id:id}</vlans>
+                </vlan>
+              </allowed>
+            </trunk>
+          </switchport>
+        </FastEthernet>
+      </interface>
+      </config>
+    </device>
+  </devices>
+</config-template>
+```
