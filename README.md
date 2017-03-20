@@ -113,3 +113,55 @@ Service template
   </devices>
 </config-template>
 ```
+
+```
+admin@ncs% set vlan volvo device c0
+[ok][2017-03-20 18:14:55]
+
+[edit]
+admin@ncs% commit
+Commit complete.
+[ok][2017-03-20 18:14:59]
+
+[edit]
+admin@ncs%
+System message at 2017-03-20 18:15:00...
+Commit performed by admin via console using cli.
+admin@ncs% show external-id-allocation
+create-kickers;
+request volvo {
+    allocating-service /vlan[name='volvo'];
+}
+[ok][2017-03-20 18:15:03]
+
+[edit]
+admin@ncs% run show external-id-allocation
+external-id-allocation create-kickers
+NAME   ALLOCATING SERVICE   ERROR  ID
+----------------------------------------
+volvo  /vlan[name='volvo']  -      242
+
+[ok][2017-03-20 18:15:10]
+
+[edit]
+admin@ncs% delete vlan volvo
+[ok][2017-03-20 18:15:14]
+
+[edit]
+admin@ncs% commit
+Commit complete.
+[ok][2017-03-20 18:15:15]
+
+[edit]
+admin@ncs% run show external-id-allocation
+external-id-allocation create-kickers
+[ok][2017-03-20 18:15:17]
+
+[edit]
+admin@ncs% show external-id-allocation
+create-kickers;
+[ok][2017-03-20 18:15:21]
+
+[edit]
+```
+
