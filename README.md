@@ -66,7 +66,18 @@ request external-id-allocation response volvo re-deploy-service
 
 And then putting the whole thing together with a service you let the service create the allocation request and then the kickers (and the subscriber) autmatically handles the rest.
 
-Here is an example that populates the request, it will then create the switchport if the response has been created and also set allocated VLAN-id in trunk allowed vlans
+Here is an example that populates the request, it will then create the switchport if the response has been created and also set allocated VLAN-id in trunk allowed vlans.
+
+Service YANG
+
+```
+module: vlan
+   +--rw vlan* [name]
+      +--rw name                        string
+      +--rw device?                     -> /ncs:devices/device/name
+```
+
+Service template
 
 ```XML
 <config-template xmlns="http://tail-f.com/ns/config/1.0" servicepoint="vlan">
