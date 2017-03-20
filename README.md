@@ -19,7 +19,7 @@ The two kickers are
  * external-id-redeploy
     * exectues the re-deploy-service action when a response entry is created
 
-To use it manually (just to show the steps), you need to have a service instance created already.
+To use it manually (just to show the steps). Make sure to have a service instance created already.
 
 first create the two kickers
 ```
