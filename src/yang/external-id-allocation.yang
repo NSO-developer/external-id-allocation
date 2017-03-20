@@ -1,0 +1,125 @@
+module external-id-allocation {
+
+  namespace "http://example.com/external-id-allocation";
+  prefix ext-id;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+  "Bla bla...";
+
+  revision 2016-01-01 {
+    description
+    "Initial revision.";
+  }
+
+
+  container external-id-allocation {
+    description "This is an RFS skeleton service";
+    presence true;
+
+    uses ncs:service-data;
+    ncs:servicepoint external-id-allocation-servicepoint;
+
+    list request {
+      key name;
+
+      leaf name {
+        type string;
+      }
+
+      leaf allocating-service {
+        tailf:info "Instance identifier of service that owns resouce";
+        type instance-identifier {
+          require-instance false;
+        }
+      }
+
+      leaf id {
+        tailf:info "Request a specific id";
+        type int32;
+        default "-1";
+      }
+      tailf:action allocate {
+        tailf:actionpoint external-id-allocation-action;
+        input {
+          leaf number {
+            type uint8;
+          }
+        }
+        output {
+          leaf result {
+            type uint16;
+          }
+        }
+      }
+    }
+      list response {
+        key name;
+
+        leaf name {
+          type string;
+        }
+// should be config false but get the dredded python lock
+        config false;
+        tailf:cdb-oper {
+          tailf:persistent true;
+        }
+
+        leaf allocating-service {
+          tailf:info "Instance identifier of service that owns resource";
+          type instance-identifier {
+            require-instance false;
+          }
+        }
+
+        choice response-choice {
+          case error {
+            leaf error {
+              type string;
+            }
+          }
+          case ok {
+            leaf id {
+              type uint32;
+            }
+          }
+        }
+        tailf:action re-deploy-service {
+          tailf:actionpoint external-id-redeploy-action;
+          input {
+            leaf number {
+              type uint8;
+            }
+          }
+          output {
+            leaf result {
+              type uint16;
+            }
+          }
+        }
+        tailf:action release {
+          tailf:actionpoint external-id-release-action;
+          input {
+            leaf number {
+              type uint8;
+            }
+          }
+          output {
+            leaf result {
+              type uint16;
+            }
+          }
+        }
+      }
+    }
+  }
+

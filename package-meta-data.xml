@@ -1,0 +1,19 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>external-id-allocation</name>
+  <package-version>1.0</package-version>
+  <description>Generated Python package</description>
+  <ncs-min-version>4.3</ncs-min-version>
+
+  <component>
+    <name>main</name>
+    <application>
+      <python-class-name>external_id_allocation.main.Main</python-class-name>
+    </application>
+  </component>
+  <component>
+    <name>redeploy</name>
+    <application>
+      <python-class-name>external_id_redeploy.main.Main</python-class-name>
+    </application>
+  </component>
+</ncs-package>

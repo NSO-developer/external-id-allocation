@@ -1,0 +1,23 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0">
+  <kickers xmlns="http://tail-f.com/ns/kicker">
+  <data-kicker>
+    <id>external-id-allocator</id>
+    <monitor>/ext-id:external-id-allocation/ext-id:request/ext-id:allocating-service</monitor>
+    <kick-node>/ext-id:external-id-allocation/ext-id:request[ext-id:name=current()/../name]</kick-node>
+    <action-name>allocate</action-name>
+  </data-kicker>
+  <data-kicker>
+    <id>external-id-redeploy</id>
+    <monitor>/ext-id:external-id-allocation/ext-id:response/ext-id:allocating-service</monitor>
+    <kick-node>/ext-id:external-id-allocation/ext-id:response[ext-id:name=current()/../name]</kick-node>
+    <action-name>re-deploy-service</action-name>
+  </data-kicker>
+</kickers>
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name></name>
+      <config>
+      </config>
+    </device>
+  </devices>
+</config-template>
