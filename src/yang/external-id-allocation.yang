@@ -53,16 +53,6 @@ module external-id-allocation {
       }
       tailf:action allocate {
         tailf:actionpoint external-id-allocation-action;
-        input {
-          leaf number {
-            type uint8;
-          }
-        }
-        output {
-          leaf result {
-            type uint16;
-          }
-        }
       }
     }
       list response {

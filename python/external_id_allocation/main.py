@@ -7,9 +7,6 @@ import _ncs
 #random is just used for testing
 import random
 
-# ---------------
-# ACTIONS EXAMPLE
-# ---------------
 class AllocateAction(Action):
     @Action.action
     def cb_action(self, uinfo, name, kp, input, output):
@@ -18,14 +15,20 @@ class AllocateAction(Action):
         #if the your actions take more than 240 seconds, increase the action_set_timeout
         #_ncs.dp.action_set_timeout(uinfo,240)
         #HERE YOU SHOULD DO YOUR EXTERNAL ALLOCATION
+        allocated_id = random.randint(100, 1000)
+
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
             allocation = ncs.maagic.get_node(trans, kp)
             allocation_name = allocation.name
             allocating_service = allocation.allocating_service
             response = allocation._parent._parent.response.create(allocation_name)
-            response.id = random.randint(100, 1000)
             response.allocating_service = allocating_service
-            #HERE YOU SHOULD DO YOUR EXTERNAL ALLOCATION
+            #using allocation.id as a test to try out failure
+            if allocation.id != -1:
+                response.error = "Failed to allocate id"
+                del response.id
+            else:
+                response.id = allocated_id
             trans.apply()
             self.log.info('action allocated id: ', str(response.id))
 
@@ -35,7 +38,6 @@ class ServiceCallbacks(Service):
         self.log.info('Service create(service=', service._path, ')')
 
         vars = ncs.template.Variables()
-        # vars.add('DUMMY', '127.0.0.1')
         template = ncs.template.Template(service)
         template.apply('external-id-allocation-template', vars)
 

@@ -1,34 +1,42 @@
-DIRS = external internal
+DIRS = internal
 
-ifeq ($(BUILD_JOB),external)
+ifeq ($(BUILD_JOB),realhw)
 DIR = external
 endif
 
-ifeq ($(BUILD_JOB),internal_realhw)
+ifeq ($(BUILD_JOB),simulated)
 DIR = internal
-JOB_DIR = realhw
-endif
-
-ifeq ($(BUILD_JOB),internal_simulated)
-DIR = internal
-JOB_DIR = simulated
 endif
 
 ifeq ($(BUILD_JOB),)
 DIR = internal
-JOB_DIR = simulated
 endif
 
-all: test
+all:
+	(cd ncs ; make all)
+	(cd package ; make all)
+	$(MAKE) -C $(DIR) all || exit 1
+
 
 clean:
-	$(MAKE) -C $(DIR) clean JOB_DIR=$(JOB_DIR) || exit 1
+	(cd ncs ; make clean)
+	(cd package ; make clean)
+	$(MAKE) -C $(DIR) clean || exit 1
+
+start:
+	(cd ncs ; make start)
+
+stop:
+	(cd ncs ; make stop)
+
+ncs-cli:
+	(cd ncs ; make cli)
 
 test:
-	$(MAKE) -C $(DIR) test JOB_DIR=$(JOB_DIR) || exit 1
+	$(MAKE) -C $(DIR) test || exit 1
 
-desc:
-	@echo "==Test Cases for NED=="
-	@for d in $(DIRS) ; do \
-	  $(MAKE) -sC $$d desc || exit 1; \
-	done
+fett:
+	(echo $(BUILD_JOB) $(DIR))
+
+
+

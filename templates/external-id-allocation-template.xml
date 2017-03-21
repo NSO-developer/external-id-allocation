@@ -8,7 +8,7 @@
   </data-kicker>
   <data-kicker>
     <id>external-id-redeploy</id>
-    <monitor>/ext-id:external-id-allocation/ext-id:response/ext-id:allocating-service</monitor>
+    <monitor>/ext-id:external-id-allocation/ext-id:response/ext-id:id</monitor>
     <kick-node>/ext-id:external-id-allocation/ext-id:response[ext-id:name=current()/../name]</kick-node>
     <action-name>re-deploy-service</action-name>
   </data-kicker>

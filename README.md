@@ -1,7 +1,7 @@
 # external-id-allocation
 Example of an external ID allocation package for NSO. The code does not go out to any external system for the allocation but the framework is there to easily add that code.
 
-It consists of three actions and two kickers. Should be three but today kickers cant explicitly run on delete so delets are handled in a subscriber.
+It consists of three actions and two kickers. Should be three but today kickers cant explicitly run on delete so deletes are handled in a subscriber.
 
 The three actions are
 
