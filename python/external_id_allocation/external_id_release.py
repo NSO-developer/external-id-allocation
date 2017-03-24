@@ -3,6 +3,7 @@ import ncs
 from ncs.application import Service
 from ncs.dp import Action
 import requests
+import ipam
 
 class RedeployAction(Action):
     @Action.action
@@ -40,25 +41,7 @@ class ReleaseAction(Action):
             response = ncs.maagic.get_node(trans, kp)
             response_name = response.name
 
-        try:
-            ipam_response = requests.get("http://localhost:8091/id/release/" + response_name)
-            print('1')
-        except requests.exceptions.ConnectionError as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            error += 'Connection error'
-            self.log.info('Connection error exception: ' + str(e))
-        except requests.exceptions.Timeout as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            error += 'Connection timeout'
-            self.log.info('Connection timeout exception: ' + str(e))
-        except requests.exceptions.TooManyRedirects as e:
-            # Tell the user their URL was bad and try a different one
-            error += 'Bad URL'
-            self.log.info('Allocation request exception: ' + str(e))
-        except requests.exceptions.RequestException as e:
-            # catastrophic error. bail.
-            error += 'Allocation request exception: ' + str(e)
-            self.log.info('Allocation request exception: ' + str(e))
+        error = ipam.release(self, response_name)
 
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
             response = ncs.maagic.get_node(trans, kp)
@@ -68,11 +51,6 @@ class ReleaseAction(Action):
                 print('forceclean')
                 del resplist[response_name]
             elif not error:
-                if ipam_response.status_code != 200:
-                    response.error = 'failed to release, HTTP error: ' + str(ipam_response.status_code)
-                else:
-                    allocated_id = str(ipam_response.content)
-
                     del resplist[response_name]
             else:
                 response.error = error

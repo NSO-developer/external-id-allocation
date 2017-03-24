@@ -8,6 +8,7 @@ import _ncs
 import random
 #to do http requests
 import requests
+import ipam
 
 class AllocateAction(Action):
     @Action.action
@@ -36,36 +37,9 @@ class AllocateAction(Action):
         #allocated_id = random.randint(100, 1000)
         error = ''
         ipam_response = None
-        try:
-            ipam_response = requests.get("http://localhost:8091/id/request/" + request_name)
-        except requests.exceptions.ConnectionError as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            error += 'Connection error'
-            self.log.info('Connection error exception: ' + str(e))
-        except requests.exceptions.Timeout as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            error += 'Connection timeout'
-            self.log.info('Connection timeout exception: ' + str(e))
-        except requests.exceptions.TooManyRedirects as e:
-            # Tell the user their URL was bad and try a different one
-            error += 'Bad URL'
-            self.log.info('Allocation request exception: ' + str(e))
-        except requests.exceptions.RequestException as e:
-            # catastrophic error. bail.
-            error += 'Allocation request exception: ' + str(e)
-            self.log.info('Allocation request exception: ' + str(e))
-
-
-        if not error:
-            if ipam_response.status_code != 200:
-                self.log.info('ipam server HTTP error: ' + str(ipam_response.status_code))
-                error += '\n' + 'ipam server HTTP error: ' + str(ipam_response.status_code)
-            else:
-                allocated_id = str(ipam_response.content)
-                self.log.info('allocated_id: ' + allocated_id)
+        allocated_id, error = ipam.request(self, request_name)
 
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
-            self.log.info('in trans: ' + error)
             request = ncs.maagic.get_node(trans, kp)
             request_name = request.name
             allocating_service = request.allocating_service

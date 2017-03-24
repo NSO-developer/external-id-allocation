@@ -13,7 +13,7 @@
   <component>
     <name>redeploy</name>
     <application>
-      <python-class-name>external_id_redeploy.main.Main</python-class-name>
+      <python-class-name>external_id_allocation.external_id_release.Main</python-class-name>
     </application>
   </component>
 </ncs-package>
