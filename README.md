@@ -31,7 +31,7 @@ show kickers
 commit
 ```
 
-then create an allocation request (the current example will just created a random intiger). The allocating service needs to be an existing instance
+then create an allocation request (the current example will just created a random intiger, or you can test it with the ipam-server.py in the test folder). The allocating service needs to be an existing instance
 
 ```
 set external-id-allocation request service-1 allocating-service /vlan[name=volvo]

@@ -6,8 +6,6 @@ import ncs.experimental
 import _ncs
 #random is just used for testing
 import random
-#to do http requests
-import requests
 import ipam
 
 class AllocateAction(Action):
@@ -33,10 +31,12 @@ class AllocateAction(Action):
                         #What do you want to do if its already allocate? Exit?
                         return
 
-        #HERE YOU SHOULD DO YOUR EXTERNAL ALLOCATION
-        #allocated_id = random.randint(100, 1000)
         error = ''
-        ipam_response = None
+
+        #To test without any ipam servier
+        #allocated_id = random.randint(100, 1000)
+
+        #to test with the small python ipam-server example
         allocated_id, error = ipam.request(self, request_name)
 
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:

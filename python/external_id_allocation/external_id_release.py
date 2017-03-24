@@ -2,7 +2,6 @@
 import ncs
 from ncs.application import Service
 from ncs.dp import Action
-import requests
 import ipam
 
 class RedeployAction(Action):
@@ -35,12 +34,13 @@ class ReleaseAction(Action):
         #_ncs.dp.action_set_timeout(uinfo,240)
         response_name = ''
         error = ''
-        ipam_response = None
 
         with ncs.maapi.single_read_trans(uinfo.username, uinfo.context) as trans:
             response = ncs.maagic.get_node(trans, kp)
             response_name = response.name
 
+
+        #release with the ipam server, to release when using random integer just out comment the line below
         error = ipam.release(self, response_name)
 
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
