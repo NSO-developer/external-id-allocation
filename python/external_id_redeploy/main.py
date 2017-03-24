@@ -2,6 +2,7 @@
 import ncs
 from ncs.application import Service
 from ncs.dp import Action
+import requests
 
 class RedeployAction(Action):
     @Action.action
@@ -10,9 +11,9 @@ class RedeployAction(Action):
         #if the your actions take more than 240 seconds, increase the action_set_timeout
         #_ncs.dp.action_set_timeout(uinfo,240)
         with ncs.maapi.single_read_trans(uinfo.username, uinfo.context) as trans:
-            allocation = ncs.maagic.get_node(trans, kp)
-            #allocation_name = allocation.name
-            allocating_service = allocation.allocating_service
+            request = ncs.maagic.get_node(trans, kp)
+            #request_name = request.name
+            allocating_service = request.allocating_service
             m = ncs.maapi.Maapi()
             self.log.info('action re-deploy-service starting: ', str(kp))
             try:
@@ -31,11 +32,50 @@ class ReleaseAction(Action):
         #HERE YOU SHOULD DO YOUR EXTERNAL RELEASE
         #if the your actions take more than 240 seconds, increase the action_set_timeout
         #_ncs.dp.action_set_timeout(uinfo,240)
+        response_name = ''
+        error = ''
+        ipam_response = None
+
+        with ncs.maapi.single_read_trans(uinfo.username, uinfo.context) as trans:
+            response = ncs.maagic.get_node(trans, kp)
+            response_name = response.name
+
+        try:
+            ipam_response = requests.get("http://localhost:8091/id/release/" + response_name)
+            print('1')
+        except requests.exceptions.ConnectionError as e:
+            # Maybe set up for a retry, or continue in a retry loop
+            error += 'Connection error'
+            self.log.info('Connection error exception: ' + str(e))
+        except requests.exceptions.Timeout as e:
+            # Maybe set up for a retry, or continue in a retry loop
+            error += 'Connection timeout'
+            self.log.info('Connection timeout exception: ' + str(e))
+        except requests.exceptions.TooManyRedirects as e:
+            # Tell the user their URL was bad and try a different one
+            error += 'Bad URL'
+            self.log.info('Allocation request exception: ' + str(e))
+        except requests.exceptions.RequestException as e:
+            # catastrophic error. bail.
+            error += 'Allocation request exception: ' + str(e)
+            self.log.info('Allocation request exception: ' + str(e))
+
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
             response = ncs.maagic.get_node(trans, kp)
             response_name = response.name
             resplist = response._parent
-            del resplist[response_name]
+            if input.force_clean:
+                print('forceclean')
+                del resplist[response_name]
+            elif not error:
+                if ipam_response.status_code != 200:
+                    response.error = 'failed to release, HTTP error: ' + str(ipam_response.status_code)
+                else:
+                    allocated_id = str(ipam_response.content)
+
+                    del resplist[response_name]
+            else:
+                response.error = error
             trans.apply()
             self.log.info('action release id: ', str(response_name))
 

@@ -6,6 +6,8 @@ import ncs.experimental
 import _ncs
 #random is just used for testing
 import random
+#to do http requests
+import requests
 
 class AllocateAction(Action):
     @Action.action
@@ -14,20 +16,70 @@ class AllocateAction(Action):
         self.log.info('action kp: ', str(kp))
         #if the your actions take more than 240 seconds, increase the action_set_timeout
         #_ncs.dp.action_set_timeout(uinfo,240)
+
+        request_name = ''
+        #Check if we have already an allocated value
+        with ncs.maapi.single_read_trans(uinfo.username, uinfo.context) as trans:
+            request = ncs.maagic.get_node(trans, kp)
+            request_name = request.name
+            #Check if we want to reallocate the id, if so we dont need to check if it exists
+            if not input.re_allocate:
+                if request._parent._parent.response.exists(request_name):
+                    response = request._parent._parent.response[request_name]
+                    if response.id:
+                        output.result = 'id: ' + str(response.id) + ' already allocated'
+                        self.log.info('action alloaction id already exists: ', str(response.id))
+                        #What do you want to do if its already allocate? Exit?
+                        return
+
         #HERE YOU SHOULD DO YOUR EXTERNAL ALLOCATION
-        allocated_id = random.randint(100, 1000)
+        #allocated_id = random.randint(100, 1000)
+        error = ''
+        ipam_response = None
+        try:
+            ipam_response = requests.get("http://localhost:8091/id/request/" + request_name)
+        except requests.exceptions.ConnectionError as e:
+            # Maybe set up for a retry, or continue in a retry loop
+            error += 'Connection error'
+            self.log.info('Connection error exception: ' + str(e))
+        except requests.exceptions.Timeout as e:
+            # Maybe set up for a retry, or continue in a retry loop
+            error += 'Connection timeout'
+            self.log.info('Connection timeout exception: ' + str(e))
+        except requests.exceptions.TooManyRedirects as e:
+            # Tell the user their URL was bad and try a different one
+            error += 'Bad URL'
+            self.log.info('Allocation request exception: ' + str(e))
+        except requests.exceptions.RequestException as e:
+            # catastrophic error. bail.
+            error += 'Allocation request exception: ' + str(e)
+            self.log.info('Allocation request exception: ' + str(e))
+
+
+        if not error:
+            if ipam_response.status_code != 200:
+                self.log.info('ipam server HTTP error: ' + str(ipam_response.status_code))
+                error += '\n' + 'ipam server HTTP error: ' + str(ipam_response.status_code)
+            else:
+                allocated_id = str(ipam_response.content)
+                self.log.info('allocated_id: ' + allocated_id)
 
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
-            allocation = ncs.maagic.get_node(trans, kp)
-            allocation_name = allocation.name
-            allocating_service = allocation.allocating_service
-            response = allocation._parent._parent.response.create(allocation_name)
+            self.log.info('in trans: ' + error)
+            request = ncs.maagic.get_node(trans, kp)
+            request_name = request.name
+            allocating_service = request.allocating_service
+            response = request._parent._parent.response.create(request_name)
             response.allocating_service = allocating_service
-            #using allocation.id as a test to try out failure
-            if allocation.id != -1:
-                response.error = "Failed to allocate id"
-                del response.id
+            #check if allocation went OK, if failed we should write to response.error
+            if error:
+                response.error = error
+            elif not allocated_id:
+                #should not happen
+                response.error = 'No ID allocated, check log file for error'
             else:
+                #Clean up old errors
+                del response.error
                 response.id = allocated_id
             trans.apply()
             self.log.info('action allocated id: ', str(response.id))
@@ -36,7 +88,6 @@ class ServiceCallbacks(Service):
     @Service.create
     def cb_create(self, tctx, root, service, proplist):
         self.log.info('Service create(service=', service._path, ')')
-
         vars = ncs.template.Variables()
         template = ncs.template.Template(service)
         template.apply('external-id-allocation-template', vars)

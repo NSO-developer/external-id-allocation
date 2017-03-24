@@ -51,8 +51,19 @@ module external-id-allocation {
         type int32;
         default "-1";
       }
+
       tailf:action allocate {
         tailf:actionpoint external-id-allocation-action;
+        input {
+          leaf re-allocate {
+            type empty;
+          }
+        }
+        output {
+          leaf result {
+            type string;
+          }
+        }
       }
     }
       list response {
@@ -88,11 +99,6 @@ module external-id-allocation {
         }
         tailf:action re-deploy-service {
           tailf:actionpoint external-id-redeploy-action;
-          input {
-            leaf number {
-              type uint8;
-            }
-          }
           output {
             leaf result {
               type uint16;
@@ -102,9 +108,10 @@ module external-id-allocation {
         tailf:action release {
           tailf:actionpoint external-id-release-action;
           input {
-            leaf number {
-              type uint8;
+            leaf force-clean {
+                type empty;
             }
+
           }
           output {
             leaf result {
