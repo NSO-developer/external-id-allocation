@@ -1,7 +1,7 @@
 # external-id-allocation
-Example of an external ID allocation package for NSO. The code does not go out to any external system for the allocation but the framework is there to easily add that code.
+Example of an external ID allocation package for NSO. It includes some example code to go out to an HTTP server to request an ID.
 
-It consists of three actions and two kickers. Should be three but today kickers cant explicitly run on delete so deletes are handled in a subscriber.
+It consists of three actions and two kickers. Should be three kickers but today they cant explicitly run on delete so deletes are handled in a subscriber.
 
 The three actions are
 
@@ -19,7 +19,7 @@ The two kickers are
  * external-id-redeploy
     * exectues the re-deploy-service action when a response entry is created
 
-To use it manually (just to show the steps). Make sure to have a service instance created already.
+Example of how to use it manually (to show the steps the package does). Make sure to have a service instance created already.
 
 first create the two kickers
 ```
@@ -27,8 +27,8 @@ ncs_cli -u admin
 unhide debug
 configure
 set external-id-allocation create-kickers
-show kickers
 commit
+show kickers
 ```
 
 then create an allocation request (the current example will just created a random intiger, or you can test it with the ipam-server.py in the test folder). The allocating service needs to be an existing instance
