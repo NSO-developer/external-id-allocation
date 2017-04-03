@@ -1,0 +1,79 @@
+[global target_dir=../../../ncs]
+
+[shell ncs]
+    [timeout 40]
+    [progress \nStart NSO\n]
+    !cd ${target_dir}
+    !make start
+    ?SH-PROMPT:
+    !echo return value ==$$?==
+#    ?==0==
+    ?SH-PROMPT:
+    [progress \nStart NSO...ok\n]
+
+[shell ncs-cli]
+    [progress \nsync-from\n]
+    !cd ${target_dir}
+    !ncs_cli -u admin
+    ?.*>
+    !request devices sync-from
+    ?.*>
+
+#[shell top]
+#    [progress \nCreate the dummy service...\n]
+#    !ncs_load -lm ../internal/lux/manual/payloads/s1.xml
+#    ?SH-PROMPT:
+#    [progress \nCreate the dummy service...ok\n]
+
+[shell ncs-cli]
+    [timeout 40]
+    [progress \Create service\n]
+    !configure
+    ?.*%
+    [progress \ncreate kickers\n]
+    !set external-id-allocation create-kickers
+    ?.*%
+    !commit
+    ?.*ommit*
+    ?.*%
+    [progress \ncreate kickers..ok\n]
+    [progress \nload merge service\n]
+    !load merge ../internal/lux/manual/payloads/s1.xml
+    ?.*%
+    !commit
+    ?.*ommit*
+    ?.*%
+    [progress \nload merge service..ok\n]
+    [progress \nVerify the service..\n]
+    !show vlan
+    ?.*device c0
+    [progress \nVerify the service...ok\n]
+
+    [progress \nVerify that the allocation worked\n]
+    !show external-id-allocation request volvo
+    ?allocating-service /vlan[name='volvo'];
+    ?.*%
+    !run show external-id-allocation response volvo id
+    ?id [0-9]
+    ?.*%
+    !show devices device c0 config ios:interface FastEthernet 1/0 switchport trunk allowed vlan vlans
+    ?vlans [*
+    ?.*%
+    [progress \nVerify that the allocation worked...ok\n]
+
+[shell ncs-cli]
+    [progress \nDelete service volvo\n]
+    !configure
+    ?admin@ncs%
+    !delete vlan volvo
+    ?admin@ncs%
+    !commit
+    ?admin@ncs%
+    [progress \nDelete service volvo...ok\n]
+
+[cleanup]
+    !cd ${target_dir}
+    !make stop
+    !echo ==$$?==
+    ?==0==
+    ?SH-PROMPT:

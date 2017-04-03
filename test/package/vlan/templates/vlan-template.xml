@@ -1,0 +1,32 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0" servicepoint="vlan">
+  <external-id-allocation xmlns="http://example.com/external-id-allocation">
+    <request>
+      <name>{/name}</name>
+      <allocating-service xmlns:vlan="http://com/example/vlan">/vlan:vlan[vlan:name='{/name}']</allocating-service>
+    </request>
+  </external-id-allocation>
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{/device}</name>
+      <config>
+      <interface xmlns="urn:ios">
+        <FastEthernet>
+          <name>1/0</name>
+          <switchport when="{../ext-id:external-id-allocation/ext-id:response[ext-id:name=/name]/ext-id:id}">
+            <mode>
+              <trunk/>
+            </mode>
+            <trunk>
+              <allowed>
+                <vlan>
+                  <vlans>{../ext-id:external-id-allocation/ext-id:response[ext-id:name=/name]/ext-id:id}</vlans>
+                </vlan>
+              </allowed>
+            </trunk>
+          </switchport>
+        </FastEthernet>
+      </interface>
+      </config>
+    </device>
+  </devices>
+</config-template>
