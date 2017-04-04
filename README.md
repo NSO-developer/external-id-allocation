@@ -33,7 +33,7 @@ show kickers
 
 then create an allocation request (the current example will just created a random integer, or you can test it with the ipam-server.py that you can find in test folder). The allocating service needs to be an existing instance.
 
-To test with an external request disable set use-random to False i.e
+To test with an external request, set use-random to False i.e
 
 ```
 set external-id-allocation use-random false
