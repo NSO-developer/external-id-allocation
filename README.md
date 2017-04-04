@@ -42,11 +42,17 @@ commit
 
 There is a small example HTTP IPAM server in the test folder. The ipam-server.py script uses web.py so remember to install that first (with pip use)
 
+In bash, not it ncs_cli :)
 ```
-bash$ pip install web.py
+pip install web.py
+```
+The start the server
+```
+cd test
+python ipam-server.py
 ```
 
-Then create an allocation request. The allocating service needs to be an existing instance.
+Then create an allocation request (in ncs_cli of course). The allocating service needs to be an existing instance.
 
 
 ```
