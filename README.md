@@ -191,3 +191,6 @@ create-kickers;
 [edit]
 ```
 
+### Contact
+
+Contact Hakan Niska <hniska@cisco.com> with any suggestions or comments. If you find any bugs please fix them and send me a pull request.
