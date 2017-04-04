@@ -40,6 +40,12 @@ set external-id-allocation use-random false
 commit
 ```
 
+ipam-server.py uses web.py so remember to install that first (with pip use)
+
+```
+bash$ pip install web.py
+```
+
 ```
 set external-id-allocation request service-1 allocating-service /vlan[name=volvo]
 commit
