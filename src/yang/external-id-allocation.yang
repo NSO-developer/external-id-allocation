@@ -32,6 +32,13 @@ module external-id-allocation {
         ncs:servicepoint external-id-allocation-servicepoint;
     }
 
+    leaf use-random {
+        type boolean;
+        default true;
+        tailf:info "will not allocate from external system, instead it will just create a random Integer, use for testing";
+    }
+
+
     list request {
       key name;
 

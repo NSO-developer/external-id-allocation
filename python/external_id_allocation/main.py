@@ -17,10 +17,16 @@ class AllocateAction(Action):
         #_ncs.dp.action_set_timeout(uinfo,240)
 
         request_name = ''
+        use_random = False
         #Check if we have already an allocated value
         with ncs.maapi.single_read_trans(uinfo.username, uinfo.context) as trans:
             request = ncs.maagic.get_node(trans, kp)
             request_name = request.name
+
+            if request._parent._parent.use_random:
+                use_random = True
+                self.log.info('USE RANDOM')
+
             #Check if we want to reallocate the id, if so we dont need to check if it exists
             if not input.re_allocate:
                 if request._parent._parent.response.exists(request_name):
@@ -34,10 +40,11 @@ class AllocateAction(Action):
         error = ''
 
         #To test without any ipam servier
-        #allocated_id = random.randint(100, 1000)
-
-        #to test with the small python ipam-server example
-        allocated_id, error = ipam.request(self, request_name)
+        if use_random:
+            allocated_id = random.randint(100, 1000)
+        else:
+            #to test with the small python ipam-server example
+            allocated_id, error = ipam.request(self, request_name)
 
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
             request = ncs.maagic.get_node(trans, kp)

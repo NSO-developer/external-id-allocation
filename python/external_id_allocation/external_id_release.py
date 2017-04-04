@@ -34,14 +34,18 @@ class ReleaseAction(Action):
         #_ncs.dp.action_set_timeout(uinfo,240)
         response_name = ''
         error = ''
-
+        use_random = False
         with ncs.maapi.single_read_trans(uinfo.username, uinfo.context) as trans:
             response = ncs.maagic.get_node(trans, kp)
             response_name = response.name
+            if response._parent._parent.use_random:
+                use_random = True
+                self.log.info('')
 
 
         #release with the ipam server, to release when using random integer just out comment the line below
-        error = ipam.release(self, response_name)
+        if not use_random:
+            error = ipam.release(self, response_name)
 
         with ncs.maapi.single_write_trans(uinfo.username, uinfo.context) as trans:
             response = ncs.maagic.get_node(trans, kp)
