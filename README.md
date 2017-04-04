@@ -19,7 +19,7 @@ The two kickers are
  * external-id-redeploy
     * exectues the re-deploy-service action when a response entry is created
 
-Example of how to use it manually (to show the steps the package does). Make sure to have a service instance created already.
+Example of how to use it manually (to illustrate the steps the package does). Make sure to have a service instance created already.
 
 first create the two kickers
 ```
@@ -46,14 +46,13 @@ In bash, not it ncs_cli :)
 ```
 pip install web.py
 ```
-The start the server
+Then start the server
 ```
-cd test
+cd packages/external-id-allocator/test
 python ipam-server.py
 ```
 
-Then create an allocation request (in ncs_cli of course). The allocating service needs to be an existing instance.
-
+Then create an allocation request (back in the ncs_cli of course). (The allocating service needs to be an existing instance)
 
 ```
 set external-id-allocation request service-1 allocating-service /vlan[name=volvo]
