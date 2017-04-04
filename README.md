@@ -31,7 +31,7 @@ commit
 show kickers
 ```
 
-then create an allocation request (the current example will just created a random integer, or you can test it with the ipam-server.py that you can find in test folder). The allocating service needs to be an existing instance.
+Before creating the request you have to decide if you want to use a random Integer as allocation or to test it with an actual external request
 
 To test with an external request, set use-random to False i.e
 
@@ -40,11 +40,14 @@ set external-id-allocation use-random false
 commit
 ```
 
-ipam-server.py uses web.py so remember to install that first (with pip use)
+There is a small example HTTP IPAM server in the test folder. The ipam-server.py script uses web.py so remember to install that first (with pip use)
 
 ```
 bash$ pip install web.py
 ```
+
+Then create an allocation request. The allocating service needs to be an existing instance.
+
 
 ```
 set external-id-allocation request service-1 allocating-service /vlan[name=volvo]
