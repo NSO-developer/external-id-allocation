@@ -19,6 +19,11 @@ The two kickers are
  * external-id-redeploy
     * exectues the re-deploy-service action when a response entry is created
 
+The package needs python requests installed to do the external allocation, to install it with pip do
+```
+pip install requests
+```
+
 Example of how to use it manually (to illustrate the steps the package does). Make sure to have a service instance created already.
 
 first create the two kickers
