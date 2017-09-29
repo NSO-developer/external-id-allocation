@@ -1,7 +1,7 @@
 <ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
   <name>external-id-allocation</name>
   <package-version>1.0</package-version>
-  <description>Generated Python package</description>
+  <description>Small example of allocating things from an external syste,</description>
   <ncs-min-version>4.3</ncs-min-version>
 
   <component>

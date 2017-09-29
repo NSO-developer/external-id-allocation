@@ -14,16 +14,16 @@ module external-id-allocation {
   }
 
   description
-  "Bla bla...";
+  "Example of a package that allocates values from an external system";
 
-  revision 2016-01-01 {
+  revision 2017-01-01 {
     description
     "Initial revision.";
   }
 
 
   container external-id-allocation {
-    description "This is an RFS skeleton service";
+    description "External ID allocations";
     presence true;
 
     container create-kickers {
@@ -35,7 +35,7 @@ module external-id-allocation {
     leaf use-random {
         type boolean;
         default true;
-        tailf:info "will not allocate from external system, instead it will just create a random Integer, use for testing";
+        tailf:info "when set it will not allocate from external system, instead it will just create a random Integer, use for testing";
     }
 
 
@@ -79,7 +79,6 @@ module external-id-allocation {
         leaf name {
           type string;
         }
-// should be config false but get the dredded python lock
         config false;
         tailf:cdb-oper {
           tailf:persistent true;

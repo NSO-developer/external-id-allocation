@@ -125,6 +125,12 @@ class Main(ncs.application.Application):
         #
         self.register_action('external-id-allocation-action', AllocateAction)
 
+        #self.log.info('Service create(service=', service._path, ')')
+        vars = ncs.template.Variables()
+        template = ncs.template.Template(service)
+        template.apply('external-id-allocation-template', vars)
+
+
         # Create your subscriber
         self.sub = DeleteSubscriber(app=self)
         self.sub.start()
