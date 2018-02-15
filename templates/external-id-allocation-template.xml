@@ -13,11 +13,4 @@
     <action-name>re-deploy-service</action-name>
   </data-kicker>
 </kickers>
-  <devices xmlns="http://tail-f.com/ns/ncs">
-    <device>
-      <name></name>
-      <config>
-      </config>
-    </device>
-  </devices>
 </config-template>
