@@ -1,0 +1,94 @@
+[global target_dir=../../../ncs]
+
+[shell ncs]
+    [timeout 40]
+    [progress \nStop NSO\n]
+    !make stop build
+    !echo ==$$?==
+    #?==0==
+    ?SH-PROMPT:
+    [progress \nStart NSO\n]
+    #!cd ${target_dir}
+    !make start
+    ?SH-PROMPT:
+    !echo return value ==$$?==
+#    ?==0==
+    ?SH-PROMPT:
+    [progress \nStart NSO...ok\n]
+
+[shell ncs-cli]
+    [progress \nsync-from\n]
+    !cd ${target_dir}
+    !ncs_cli -u admin
+    ?.*>
+    !request devices sync-from
+    ?.result true
+    ?.*>
+
+[shell ncs-cli]
+    [timeout 10]
+    [progress \nCreate service\n]
+    !configure
+    ?.*%
+    [progress \nDelete leftovers\n]
+    !delete vlan
+    ?.*%
+    !set external-id-allocation use-random true
+    ?.*%
+    !commit
+    ?.*%
+    [progress \nDelete leftovers...ok\n]
+    [progress \ncreate kickers\n]
+    !set external-id-allocation create-kickers
+    ?.*%
+    !commit
+    ?.*ommit*
+    ?.*%
+    [progress \ncreate kickers..ok\n]
+    [progress \nload merge service\n]
+    !load merge ../internal/lux/manual-allocation/payloads/s1.xml
+    ?\[ok
+    ?.*%
+    !commit
+    ?.*ommit*
+    ?.*%
+    [progress \nload merge service..ok\n]
+    [progress \nVerify the service..\n]
+    !show vlan
+    ?.*device c0
+    [progress \nVerify the service...ok\n]
+
+    [progress \nVerify that the allocation worked\n]
+    !show external-id-allocation request volvo
+    #?.allocating-service /vlan[name='volvo']
+    ?allocating-service
+    ?.*%
+    !run show external-id-allocation response volvo id
+    ?id [0-9]
+    ?.*%
+    !show devices device c0 config ios:interface FastEthernet 1/0 switchport trunk allowed vlan vlans
+    ?vlans \[*
+    ?.*%
+    [progress \nVerify that the allocation worked...ok\n]
+
+[shell ncs-cli]
+    [progress \nDelete service volvo\n]
+    !configure
+    ?admin@ncs%
+    !delete vlan volvo
+    ?admin@ncs%
+    !commit
+    ?admin@ncs%
+    [progress \nDelete service volvo...ok\n]
+    [progress \nVerify that the delete subscriber works\n]
+    !run show external-id-allocation response volvo id
+    ?syntax error: unknown argument
+    ?.*%
+    [progress \nVerify that the allocation is returned...ok\n]
+
+[cleanup]
+    !cd ${target_dir}
+    !make stop
+    !echo ==$$?==
+    ?==0==
+    ?SH-PROMPT:

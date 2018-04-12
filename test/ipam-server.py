@@ -16,6 +16,7 @@ urls = (
 
 allocations = {}
 for id in root:
+    print('attrib:' + id.attrib['name'])
     allocations[id.attrib['name']] = id.attrib['id']
 
 app = web.application(urls, globals())
@@ -29,12 +30,13 @@ class request_id:
         #         return str(id.attrib['id'])
         #if not prepopulated, generate a new random number
 
+
         if allocations.has_key(request_name):
             print('request: ' + request_name + ' allocated: ' + str(allocations[request_name]))
             return allocations[request_name]
         else:
             allocations[request_name] = random.randint(1001, 2000)
-            print('request: ' + request_name + ' allocated: ' + str(allocations[request_name]))
+            print('request: ' + request_name + ' randomly allocated: ' + str(allocations[request_name]))
             return allocations[request_name]
 
     def POST(self, request_name):

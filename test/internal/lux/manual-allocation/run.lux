@@ -2,8 +2,13 @@
 
 [shell ncs]
     [timeout 40]
+    [progress \nStop NSO\n]
+    !make stop build
+    !echo ==$$?==
+    #?==0==
+    ?SH-PROMPT:
     [progress \nStart NSO\n]
-    !cd ${target_dir}
+    #!cd ${target_dir}
     !make start
     ?SH-PROMPT:
     !echo return value ==$$?==
@@ -17,28 +22,29 @@
     !ncs_cli -u admin
     ?.*>
     !request devices sync-from
+    ?.result true
     ?.*>
 
-#[shell top]
-#    [progress \nCreate the dummy service...\n]
-#    !ncs_load -lm ../internal/lux/manual/payloads/s1.xml
-#    ?SH-PROMPT:
-#    [progress \nCreate the dummy service...ok\n]
-
 [shell ncs-cli]
-    [timeout 40]
-    [progress \Create service\n]
+    [timeout 10]
+    [progress \nCreate service\n]
     !configure
     ?.*%
-    [progress \ncreate kickers\n]
-    !set external-id-allocation create-kickers
+    [progress \nDelete leftovers\n]
+    !delete vlan
+    ?.*%
+    !set external-id-allocation use-random true
+    ?.*%
+    !delete external-id-allocation create-kickers
     ?.*%
     !commit
-    ?.*ommit*
     ?.*%
-    [progress \ncreate kickers..ok\n]
+
+    [progress \nDelete leftovers...ok\n]
+
     [progress \nload merge service\n]
-    !load merge ../internal/lux/manual/payloads/s1.xml
+    !load merge ../internal/lux/manual-allocation/payloads/s1.xml
+    ?\[ok
     ?.*%
     !commit
     ?.*ommit*
@@ -49,15 +55,23 @@
     ?.*device c0
     [progress \nVerify the service...ok\n]
 
-    [progress \nVerify that the allocation worked\n]
+    [progress \nRun manual allocation\n]
+    !request external-id-allocation request volvo allocate
+    ?\[ok
+    ?.*%
+    !request vlan volvo re-deploy
+    ?\[ok
+    ?.*%
+    [progress \nVerify that the allocation worked...ok\n]
     !show external-id-allocation request volvo
-    ?allocating-service /vlan[name='volvo'];
+    #?.allocating-service /vlan[name='volvo']
+    ?allocating-service
     ?.*%
     !run show external-id-allocation response volvo id
     ?id [0-9]
     ?.*%
     !show devices device c0 config ios:interface FastEthernet 1/0 switchport trunk allowed vlan vlans
-    ?vlans [*
+    ?vlans \[*
     ?.*%
     [progress \nVerify that the allocation worked...ok\n]
 
@@ -70,6 +84,11 @@
     !commit
     ?admin@ncs%
     [progress \nDelete service volvo...ok\n]
+    [progress \nVerify that the delete subscriber works\n]
+    !run show external-id-allocation response volvo id
+    ?syntax error: unknown argument
+    ?.*%
+    [progress \nVerify that the allocation is returned...ok\n]
 
 [cleanup]
     !cd ${target_dir}

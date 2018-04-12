@@ -1,12 +1,12 @@
 
 This is a directory for running NCS. The initialization files have
 been generated from running towards netsim project defined
-in /Users/hniska/stash.tail-f.com/external-id-allocation/test/ncs/netsim
+in /Users/hniska/stash.tail-f.com/external-id-allocation/test2/ncs/netsim
 
 The directory content in . has been generated through
 the invocation of
 
-# /Users/hniska/ncs-release/4.3.1/bin/ncs-setup --package cisco-ios --dest .
+# /Users/hniska/ncs-release/4.6/bin/ncs-setup --package cisco-ios --dest .
 
 The devices in that netsim directory are
 

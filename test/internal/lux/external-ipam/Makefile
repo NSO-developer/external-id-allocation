@@ -7,11 +7,11 @@
 # Make sure the TARGET_DIR has got the following make targets:
 .PHONY: clean build start stop
 
-export TARGET_DIR=../../../../../..
+export TARGET_DIR=../../../ncs/
 
 .PHONY: test
 test:
-	lux run.lux
+	~/stash.tail-f.com/lux/bin/lux run.lux
 
 clean:
 	$(MAKE) -C $(TARGET_DIR) clean

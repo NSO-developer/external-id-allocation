@@ -39,7 +39,7 @@
     ?SH-PROMPT:
 
     [progress \nVerify that the service code has been invoked...\n]
-    !tail -f ./logs/ncs-python-vm-external-id-allocation.log
+    !tail -f ./logs/ncs-python-vm-sdf.log
     ?.*Worker RUNNING.*
     ?.*Service create.*
     [progress \nVerify that the service code has been invoked...ok\n]

@@ -1,17 +1,29 @@
-all: packages/external-id-allocation packages/vlan
+all:  ncs-setup packages/external-id-allocation packages/vlan netsim
 
-packages/external-id-allocation:  ncs-setup
-	rm -rf packages/external-id-allocation
+build: all
+
+packages/external-id-allocation:
 	(cd packages; ln -s ../../../../external-id-allocation .)
 	(cd packages/external-id-allocation/src; make all)
 
-packages/vlan:  ncs-setup
-	rm -rf packages/vlan
+packages/vlan:
 	(cd packages; ln -s ../../package/vlan .)
+	(cd packages/vlan/src; make all)
 
 ncs-setup:
-	ncs-setup --package cisco-ios --dest .
+	ncs-setup --no-netsim --ned-package cisco-ios --dest .
 	cp -f ncs.conf.with-debug ncs.conf
+
+netsim:
+	if [ ! -d netsim ]; then \
+		ncs-netsim create-device cisco-ios c0; \
+	else \
+		ncs-netsim add-device cisco-ios c0; \
+	fi
+	ncs-netsim ncs-xml-init > ncs-cdb/cisco.xml
+
+start-ipam:
+	(cd ../;python ipam-server.py > ipam.log 2>&1 & echo $$! > ipam.pid)
 
 start:
 	`which ncs` || exit 0
@@ -20,9 +32,13 @@ start:
 stop:
 	`which ncs` --stop
 	`which ncs-netsim` stop
+	if [ -e "../ipam.pid" ]; then (kill `cat ../ipam.pid` && rm ../ipam.pid); fi
+
 
 clean:
-	rm -rf README.ncs logs ncs-cdb ncs.conf packages/* scripts state
+	if [ -d "packages/vlan/src" ]; then (cd packages/vlan/src; make clean); fi
+	if [ -d "packages/external-id-allocation/src" ]; then (cd packages/external-id-allocation/src; make clean); fi
+	rm -rf README.ncs logs ncs-cdb ncs.conf packages/* scripts state netsim ../ipam.log ../ipam.pid
 
 cli:
 	ncs_cli -u admin
