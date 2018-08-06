@@ -57,7 +57,7 @@
     !show vlan
     ?.*device c0
     [progress \nVerify the service...ok\n]
-
+    [sleep 3]
     [progress \nVerify that the allocation worked\n]
     !show external-id-allocation request volvo
     #?.allocating-service /vlan[name='volvo']

@@ -11,8 +11,8 @@
     #!cd ${target_dir}
     !make start
     ?SH-PROMPT:
-    !echo return value ==$$?==
-#    ?==0==
+    !echo ==$$?==
+    ?==0==
     ?SH-PROMPT:
     [progress \nStart NSO...ok\n]
 

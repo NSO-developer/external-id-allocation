@@ -23,8 +23,8 @@
     #!cd ${target_dir}
     !make start
     ?SH-PROMPT:
-    !echo return value ==$$?==
-#    ?==0==
+    !echo ==$$?==
+    ?==0==
     ?SH-PROMPT:
     [progress \nStart NSO...ok\n]
 
@@ -64,7 +64,6 @@
     ?.*%
     [progress \nSet use ipam-server..ok\n]
 
-
     [progress \nload merge service\n]
     !load merge ../internal/lux/manual-allocation/payloads/s1.xml
     ?\[ok
@@ -77,7 +76,7 @@
     !show vlan
     ?.*device c0
     [progress \nVerify the service...ok\n]
-    !sleep 3
+    [sleep 5]
     [progress \nVerify that the allocation worked\n]
     !show external-id-allocation request volvo
     #?.allocating-service /vlan[name='volvo']

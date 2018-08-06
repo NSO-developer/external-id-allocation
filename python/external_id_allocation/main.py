@@ -96,11 +96,11 @@ class DeleteSubscriber(ncs.experimental.Subscriber):
     # This will run in a separate thread to avoid a transaction deadlock
     def post_iterate(self, state):
         self.log.info('DeleteSubscriber: post_iterate, state=', state)
-        response_kp = state[0]
         with ncs.maapi.single_read_trans('system', 'system') as trans:
-            allocation = ncs.maagic.get_node(trans, response_kp)
-            allocation.ext_id__release()
-            self.log.info('Allocation released: ', response_kp)
+            for response_kp in state:
+                allocation = ncs.maagic.get_node(trans, response_kp)
+                allocation.ext_id__release()
+                self.log.info('Allocation released: ', response_kp)
 
     # determine if post_iterate() should run
     def should_post_iterate(self, state):
