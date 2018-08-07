@@ -100,12 +100,78 @@
     !commit
     ?.*%
     [progress \nDelete service volvo...ok\n]
-
+    [sleep 3]
     [progress \nVerify that the delete subscriber works\n]
     !run show external-id-allocation response volvo id
     ?syntax error: unknown argument
     ?.*%
     [progress \nVerify that the allocation is returned...ok\n]
+
+[shell ncs-cli]
+    [timeout 10]
+    [progress \nload merge multiple services\n]
+    !load merge ../internal/lux/manual-allocation/payloads/s1.xml
+    ?\[ok
+    ?.*%
+    !load merge ../internal/lux/manual-allocation/payloads/s2.xml
+    ?\[ok
+    ?.*%
+    !commit
+    ?.*ommit*
+    ?.*%
+    [progress \nload merge multiple services..ok\n]
+
+    [progress \nVerify the services..\n]
+    !show vlan
+    ?vlan saab
+    ?vlan volvo
+    [progress \nVerify the service...ok\n]
+
+    [sleep 5]
+
+    [progress \nVerify that the allocation worked\n]
+    !show external-id-allocation request volvo
+    #?.allocating-service /vlan[name='volvo']
+    ?allocating-service
+    ?.*%
+    !run show external-id-allocation response volvo id
+    ?id 100
+    ?.*%
+    !show devices device c0 config ios:interface FastEthernet 1/0 switchport trunk allowed vlan vlans
+    ?vlans \[ 100
+    ?.*%
+    !show external-id-allocation request saab
+    #?.allocating-service /vlan[name='saab']
+    ?allocating-service
+    ?.*%
+    !run show external-id-allocation response saab id
+    ?id
+    ?.*%
+    !show devices device c0 config ios:interface FastEthernet 1/0 switchport trunk allowed vlan vlans
+    ?vlans \[ 100 1
+    ?.*%
+    [progress \nVerify that the allocation worked...ok\n]
+
+[shell ncs-cli]
+    [progress \nDelete multiple services\n]
+    !configure
+    ?.*%
+    !delete vlan
+    ?.*%
+    !commit
+    ?.*%
+    [progress \nDelete services...ok\n]
+    [sleep 5]
+    [progress \nVerify that the delete subscriber works\n]
+    !run show external-id-allocation response volvo id
+    ?syntax error: unknown argument
+    ?.*%
+    !run show external-id-allocation response saab id
+    ?syntax error: unknown argument
+    ?.*%
+    [progress \nVerify that the allocation is returned...ok\n]
+
+
 
 [cleanup]
     !cd ${target_dir}

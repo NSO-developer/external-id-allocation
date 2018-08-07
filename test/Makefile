@@ -24,6 +24,9 @@ all: build test
 clean:
 	$(MAKE) -C $(DIR) clean JOB_DIR=$(JOB_DIR) || exit 1
 
+stop:
+	$(MAKE) -C $(DIR) stop JOB_DIR=$(JOB_DIR) || exit 1
+
 test:
 	$(MAKE) -C $(DIR) test JOB_DIR=$(JOB_DIR) || exit 1
 

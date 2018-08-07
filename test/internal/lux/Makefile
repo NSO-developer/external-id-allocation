@@ -5,6 +5,11 @@ clean:
 	  $(MAKE) -C $$d clean || exit 1; \
 	done
 
+stop:
+	@for d in $(DIRS) ; do \
+	  $(MAKE) -C $$d stop || exit 1; \
+	done
+
 test:
 	@for d in $(DIRS) ; do \
 	  $(MAKE) -C $$d test || exit 1; \

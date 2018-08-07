@@ -23,6 +23,7 @@ netsim:
 	ncs-netsim ncs-xml-init > ncs-cdb/cisco.xml
 
 start-ipam:
+	if [ -e "../ipam.pid" ]; then (kill `cat ../ipam.pid` && rm ../ipam.pid); fi
 	(cd ../;python ipam-server.py > ipam.log 2>&1 & echo $$! > ipam.pid)
 
 start:

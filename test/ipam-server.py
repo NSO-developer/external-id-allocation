@@ -15,27 +15,25 @@ urls = (
 )
 
 allocations = {}
+pre_allocations = {}
 for id in root:
     print('attrib:' + id.attrib['name'])
-    allocations[id.attrib['name']] = id.attrib['id']
+    pre_allocations[id.attrib['name']] = id.attrib['id']
 
 app = web.application(urls, globals())
 
 class request_id:
     def GET(self, request_name):
-        # for id in root:
-        #     print('request name: ' + request_name)
-        #     if id.attrib['name'] == request_name:
-        #         print('request name: ' + request_name + ' return id: ' + id)
-        #         return str(id.attrib['id'])
-        #if not prepopulated, generate a new random number
 
-
-        if allocations.has_key(request_name):
-            print('request: ' + request_name + ' allocated: ' + str(allocations[request_name]))
+        if pre_allocations.has_key(request_name):
+            print('request: ' + request_name + ' pre allocated: ' + str(pre_allocations[request_name]))
+            allocations[request_name] = pre_allocations[request_name]
+            return allocations[request_name]
+        elif allocations.has_key(request_name):
+            print('request: ' + request_name + ' already allocated: ' + str(allocations[request_name]))
             return allocations[request_name]
         else:
-            allocations[request_name] = random.randint(1001, 2000)
+            allocations[request_name] = random.randint(1001, 1999)
             print('request: ' + request_name + ' randomly allocated: ' + str(allocations[request_name]))
             return allocations[request_name]
 
@@ -46,8 +44,13 @@ class request_id:
 
 class release_id:
     def GET(self, request_name):
-        print('released: ' + request_name + ' id: ' + str(allocations[request_name]))
-        del allocations[request_name]
+        if allocations.has_key(request_name):
+            print('released: ' + request_name + ' id: ' + str(allocations[request_name]))
+            del allocations[request_name]
+        else:
+            print('tried to released: ' + request_name + ' but no allocation was found')
+            for requests in allocations:
+                print("found allocations " + requests)
         return str('OK')
 
 if __name__ == "__main__":
