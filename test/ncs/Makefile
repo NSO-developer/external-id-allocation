@@ -24,7 +24,7 @@ netsim:
 
 start-ipam:
 	if [ -e "../ipam.pid" ]; then (kill `cat ../ipam.pid` && rm ../ipam.pid); fi
-	(cd ../;python ipam-server.py > ipam.log 2>&1 & echo $$! > ipam.pid)
+	(cd ../;python ipam-server.py > /dev/null 2>&1 & echo $$! > ipam.pid)
 
 start:
 	`which ncs` || exit 0
@@ -39,7 +39,7 @@ stop:
 clean:
 	if [ -d "packages/vlan/src" ]; then (cd packages/vlan/src; make clean); fi
 	if [ -d "packages/external-id-allocation/src" ]; then (cd packages/external-id-allocation/src; make clean); fi
-	rm -rf README.ncs logs ncs-cdb ncs.conf packages/* scripts state netsim ../ipam.log ../ipam.pid
+	rm -rf README.ncs logs ncs-cdb ncs.conf packages/* scripts state netsim ../ipam-server.log ../ipam.pid
 
 cli:
 	ncs_cli -u admin
