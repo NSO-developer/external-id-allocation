@@ -29,9 +29,9 @@ def request(self, request_name):
         self.log.info('Allocation request exception: ' + str(e))
 
     if not error:
-        allocated_id = str(ipam_response.content)
+        allocated_id = ipam_response.content.decode('utf-8')
 
-    return allocated_id, error
+    return str(allocated_id), error
 
 
 def release(self, response_name):

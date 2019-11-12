@@ -5,7 +5,8 @@ from ncs.dp import Action
 import ncs.experimental
 # random is just used for testing
 import random
-import ipam
+from . import ipam
+
 
 
 class AllocateAction(Action):

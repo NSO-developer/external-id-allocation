@@ -1,7 +1,8 @@
 # -*- mode: python; python-indent: 4 -*-
 import ncs
 from ncs.dp import Action
-import ipam
+from . import ipam
+
 
 
 class RedeployAction(Action):

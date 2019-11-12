@@ -11,14 +11,14 @@ packages/vlan:
 	(cd packages/vlan/src; make all)
 
 ncs-setup:
-	ncs-setup --no-netsim --ned-package cisco-ios --dest .
+	ncs-setup --no-netsim --ned-package cisco-ios-cli-3.8 --dest .
 	cp -f ncs.conf.with-debug ncs.conf
 
 netsim:
 	if [ ! -d netsim ]; then \
-		ncs-netsim create-device cisco-ios c0; \
+		ncs-netsim create-device cisco-ios-cli-3.8 c0; \
 	else \
-		ncs-netsim add-device cisco-ios c0; \
+		ncs-netsim add-device cisco-ios-cli-3.8 c0; \
 	fi
 	ncs-netsim ncs-xml-init > ncs-cdb/cisco.xml
 

@@ -30,6 +30,11 @@
 
   <state-dir>./state</state-dir>
 
+
+   <python-vm>
+       <start-command>bin/ncs-start-python-vm</start-command>
+   </python-vm>
+
   <notifications>
     <event-streams>
 
