@@ -79,7 +79,8 @@ class ServiceCallbacks(Service):
 # ------------------------------------------------
 # SUBSCRIBER for deletes, only here until kickers can distinguish between create/delete
 # ------------------------------------------------
-class DeleteSubscriber(ncs.experimental.Subscriber):
+#class DeleteSubscriber(ncs.cdb.Subscriber):
+class DeleteSubscriber(ncs.cdb.Subscriber):
     def init(self):
         self.register('/ext-id:external-id-allocation/ext-id:request', priority=100)
 

@@ -9,23 +9,26 @@
     <device>
       <name>{/device}</name>
       <config>
+
+      <?if {../ext-id:external-id-allocation/ext-id:response[ext-id:name=/vlan:name]/ext-id:id}?>
       <interface xmlns="urn:ios">
         <FastEthernet>
           <name>1/0</name>
-          <switchport when="{../ext-id:external-id-allocation/ext-id:response[ext-id:name=/name]/ext-id:id}">
+          <switchport>
             <mode>
               <trunk/>
             </mode>
             <trunk>
               <allowed>
                 <vlan>
-                  <vlans>{../ext-id:external-id-allocation/ext-id:response[ext-id:name=/name]/ext-id:id}</vlans>
+                  <vlans>{../ext-id:external-id-allocation/ext-id:response[ext-id:name=/vlan:name]/ext-id:id}</vlans>
                 </vlan>
               </allowed>
             </trunk>
           </switchport>
         </FastEthernet>
       </interface>
+      <?end?>
       </config>
     </device>
   </devices>

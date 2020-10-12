@@ -132,6 +132,10 @@
       <key>0123456789abcdef0123456789abcdef</key>
       <initVector>0123456789abcdef0123456789abcdef</initVector>
     </AESCFB128>
+    <AES256CFB128>
+     <key>0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef</key>
+    </AES256CFB128>
+
   </encrypted-strings>
 <hide-group>
      <name>debug</name>
@@ -307,10 +311,6 @@
       </php>
     </cgi>
   </webui>
-
-  <rest>
-    <enabled>true</enabled>
-  </rest>
 
   <restconf>
     <enabled>true</enabled>

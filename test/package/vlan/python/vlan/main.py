@@ -49,7 +49,7 @@ class ServiceCallbacks(Service):
     # def cb_post_modification(self, tctx, op, kp, root, proplist):
     #     self.log.info('Service premod(service=', kp, ')')
 
-class DeleteSubscriber(ncs.experimental.Subscriber):
+class DeleteSubscriber(ncs.cdb.Subscriber):
     def init(self):
         self.register('/vlan:vlanid', priority=100)
 

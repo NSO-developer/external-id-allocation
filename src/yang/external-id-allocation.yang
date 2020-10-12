@@ -24,7 +24,6 @@ module external-id-allocation {
 
   container external-id-allocation {
     description "External ID allocations";
-    presence true;
 
     container create-kickers {
         presence true;
