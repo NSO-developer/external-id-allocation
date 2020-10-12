@@ -22,7 +22,11 @@ pre_allocations = {}
 for id in root:
     name = id.attrib['name']
     id = id.attrib['id']
+<<<<<<< HEAD
     print('attrib:' + name)
+=======
+    print(('attrib:' + name))
+>>>>>>> c0288fc1e1083055d7b9e8f23d924d53792e0af4
     pre_allocations[name] = id
     logging.info('Loading pre-allocation {} id {}'.format(name, id))
 
