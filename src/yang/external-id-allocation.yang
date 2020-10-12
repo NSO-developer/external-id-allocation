@@ -22,109 +22,107 @@ module external-id-allocation {
   }
 
 
-  container external-id-allocation {
-    description "External ID allocations";
+    container external-id-allocation {
+        description "External ID allocations";
 
-    container create-kickers {
-        presence true;
-        uses ncs:service-data;
-        ncs:servicepoint external-id-allocation-servicepoint;
-    }
-
-    leaf use-random {
-        type boolean;
-        default true;
-        tailf:info "when set it will not allocate from external system, instead it will just create a random Integer, use for testing";
-    }
-
-
-    list request {
-      key name;
-
-      leaf name {
-        type string;
-      }
-
-      leaf allocating-service {
-        tailf:info "Instance identifier of service that owns resouce";
-        type instance-identifier {
-          require-instance false;
+        container create-kickers {
+            presence true;
+            uses ncs:service-data;
+            ncs:servicepoint external-id-allocation-servicepoint;
         }
-      }
 
-      leaf id {
-        tailf:info "Request a specific id";
-        type int32;
-        default "-1";
-      }
-
-      tailf:action allocate {
-        tailf:actionpoint external-id-allocation-action;
-        input {
-          leaf re-allocate {
-            type empty;
-          }
+        leaf use-random {
+            type boolean;
+            default true;
+            tailf:info "when set it will not allocate from external system, instead it will just create a random Integer, use for testing";
         }
-        output {
-          leaf result {
+
+        list request {
+          key name;
+
+          leaf name {
             type string;
           }
-        }
-      }
-    }
-      list response {
-        key name;
 
-        leaf name {
-          type string;
-        }
-        config false;
-        tailf:cdb-oper {
-          tailf:persistent true;
-        }
+          leaf allocating-service {
+            tailf:info "Instance identifier of service that owns resouce";
+            type instance-identifier {
+              require-instance false;
+            }
+          }
 
-        leaf allocating-service {
-          tailf:info "Instance identifier of service that owns resource";
-          type instance-identifier {
-            require-instance false;
+          leaf id {
+            tailf:info "Request a specific id";
+            type int32;
+            default "-1";
+          }
+
+          tailf:action allocate {
+            tailf:actionpoint external-id-allocation-action;
+            input {
+              leaf re-allocate {
+                type empty;
+              }
+            }
+            output {
+              leaf result {
+                type string;
+              }
+            }
           }
         }
+        list response {
+            key name;
 
-        choice response-choice {
-          case error {
-            leaf error {
+            leaf name {
               type string;
             }
-          }
-          case ok {
-            leaf id {
-              type uint32;
-            }
-          }
-        }
-        tailf:action re-deploy-service {
-          tailf:actionpoint external-id-redeploy-action;
-          output {
-            leaf result {
-              type uint16;
-            }
-          }
-        }
-        tailf:action release {
-          tailf:actionpoint external-id-release-action;
-          input {
-            leaf force-clean {
-                type empty;
+            config false;
+            tailf:cdb-oper {
+              tailf:persistent true;
             }
 
-          }
-          output {
-            leaf result {
-              type uint16;
+            leaf allocating-service {
+              tailf:info "Instance identifier of service that owns resource";
+              type instance-identifier {
+                require-instance false;
+              }
             }
-          }
+
+            choice response-choice {
+              case error {
+                leaf error {
+                  type string;
+                }
+              }
+              case ok {
+                leaf id {
+                  type uint32;
+                }
+              }
+            }
+            tailf:action re-deploy-service {
+              tailf:actionpoint external-id-redeploy-action;
+              output {
+                leaf result {
+                  type uint16;
+                }
+              }
+            }
+            tailf:action release {
+              tailf:actionpoint external-id-release-action;
+              input {
+                leaf force-clean {
+                    type empty;
+                }
+              }
+              output {
+                leaf result {
+                  type uint16;
+                }
+              }
+            }
         }
-      }
     }
-  }
+}
 
